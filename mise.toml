@@ -1,0 +1,14 @@
+[tools]
+# The checker. Pin it; bump the version when algorithms.gshaw.ca releases a new one.
+"github:gshaw/algorithms" = { version = "0.1.0", exe = "algorithms-check" }
+# Add your language's toolchain here.
+
+# Reads cases as JSON Lines on standard input and writes one result per line.
+# Replace this with your implementation. Until then it answers notImplemented to
+# every case, so the check runs and every algorithm shows as incomplete.
+[tasks.evaluate]
+run = """sed -E 's/^.*"id":"([^"]*)".*$/{"id":"\\1","error":"notImplemented"}/'"""
+
+# Runs the checker over the current test data and writes conformance.json.
+[tasks.test]
+run = "algorithms-check"

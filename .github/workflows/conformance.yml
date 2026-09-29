@@ -1,0 +1,40 @@
+name: Conformance
+
+# Checks the implementation against the current test data on every push and weekly,
+# and commits conformance.json, which algorithms.gshaw.ca reads.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v4
+      - name: Check
+        id: check
+        run: mise run test
+        continue-on-error: true
+      - name: Commit conformance.json
+        # The template itself doesn't commit one, so repos made from it start clean.
+        if: github.event_name != 'pull_request' && github.repository != 'gshaw/algorithms-template'
+        run: |
+          git add conformance.json
+          if git diff --cached --quiet; then
+            echo "conformance.json unchanged"
+          else
+            git -c user.name="github-actions[bot]" -c user.email="41898283+github-actions[bot]@users.noreply.github.com" \
+              commit -m "Conformance against the current test data"
+            git push
+          fi
+      - name: Result
+        if: steps.check.outcome != 'success'
+        run: exit 1
