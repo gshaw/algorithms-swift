@@ -1,0 +1,14 @@
+{
+  "checker": "0.1.0",
+  "source": "https://algorithms.gshaw.ca/algorithms.json",
+  "results": {
+    "wmm": {
+      "status": "incomplete",
+      "publishedDate": "2026-09-29",
+      "cases": 135,
+      "passed": 0,
+      "failed": 0,
+      "notImplemented": 135
+    }
+  }
+}
