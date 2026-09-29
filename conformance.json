@@ -3,11 +3,11 @@
   "source": "https://algorithms.gshaw.ca/algorithms.json",
   "results": {
     "utm-mgrs": {
-      "status": "fails",
+      "status": "passes",
       "publishedDate": "2026-09-29",
       "cases": 1682,
-      "passed": 1680,
-      "failed": 2,
+      "passed": 1682,
+      "failed": 0,
       "notImplemented": 0
     },
     "wmm": {
