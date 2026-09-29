@@ -2,6 +2,14 @@
   "checker": "0.1.0",
   "source": "https://algorithms.gshaw.ca/algorithms.json",
   "results": {
+    "bearings": {
+      "status": "passes",
+      "publishedDate": "2026-09-29",
+      "cases": 815,
+      "passed": 815,
+      "failed": 0,
+      "notImplemented": 0
+    },
     "utm-mgrs": {
       "status": "passes",
       "publishedDate": "2026-09-29",

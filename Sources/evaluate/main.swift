@@ -1,6 +1,7 @@
 // Reads cases from algorithms.gshaw.ca as JSON Lines on standard input and writes one
 // result per line. See https://algorithms.gshaw.ca/format/#implementations.
 
+import Bearings
 import Foundation
 import UTMMGRS
 import WMM
@@ -94,6 +95,45 @@ func utmMgrs(_ operation: String, _ input: [String: Any]) throws -> [String: Any
     }
 }
 
+func bearings(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    func north(_ name: String) throws -> Bearings.North {
+        guard let value = Bearings.North(rawValue: try string(input, name)) else { throw Failure.invalidInput }
+        return value
+    }
+    do {
+        switch operation {
+        case "inverse":
+            let r = try Bearings.inverse(
+                fromLatitude: number(input, "fromLatitudeInDegrees"), fromLongitude: number(input, "fromLongitudeInDegrees"),
+                toLatitude: number(input, "toLatitudeInDegrees"), toLongitude: number(input, "toLongitudeInDegrees"))
+            return ["distanceInMeters": r.distance, "bearingInDegrees": r.bearing]
+        case "destination":
+            let r = try Bearings.destination(
+                fromLatitude: number(input, "fromLatitudeInDegrees"), fromLongitude: number(input, "fromLongitudeInDegrees"),
+                distance: number(input, "distanceInMeters"), bearing: number(input, "bearingInDegrees"))
+            return ["toLatitudeInDegrees": r.latitude, "toLongitudeInDegrees": r.longitude]
+        case "backAzimuth":
+            return ["backAzimuthInDegrees": Bearings.backAzimuth(try number(input, "bearingInDegrees"))]
+        case "turn":
+            let r = Bearings.turn(from: try number(input, "fromBearingInDegrees"), to: try number(input, "toBearingInDegrees"))
+            return ["turnInDegrees": r.degrees, "direction": r.direction.rawValue]
+        case "convertNorth":
+            return ["convertedBearingInDegrees": Bearings.convert(
+                try number(input, "bearingInDegrees"), from: try north("fromNorth"), to: try north("toNorth"),
+                declination: try number(input, "magneticDeclinationInDegrees"), convergence: try number(input, "convergenceInDegrees"))]
+        case "formatBearing":
+            guard let unit = Bearings.AngleUnit(rawValue: try string(input, "angleUnit")) else { throw Failure.invalidInput }
+            return ["bearingText": Bearings.format(try number(input, "bearingInDegrees"), unit: unit)]
+        case "compassPoint":
+            return ["compassPointText": try Bearings.compassPoint(try number(input, "bearingInDegrees"), points: try integer(input, "pointCount"))]
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as Bearings.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -105,6 +145,7 @@ while let line = readLine() {
         switch query["algorithm"] as? String {
         case "wmm": reply["output"] = try wmm(operation, input)
         case "utm-mgrs": reply["output"] = try utmMgrs(operation, input)
+        case "bearings": reply["output"] = try bearings(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {

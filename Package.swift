@@ -9,10 +9,12 @@ let package = Package(
     products: [
         .library(name: "WMM", targets: ["WMM"]),
         .library(name: "UTMMGRS", targets: ["UTMMGRS"]),
+        .library(name: "Bearings", targets: ["Bearings"]),
     ],
     targets: [
         .target(name: "WMM"),
         .target(name: "UTMMGRS"),
-        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS"]),
+        .target(name: "Bearings"),
+        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS", "Bearings"]),
     ]
 )
