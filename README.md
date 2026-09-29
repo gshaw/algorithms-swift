@@ -7,6 +7,7 @@ Made from [algorithms-template](https://github.com/gshaw/algorithms-template).
 | Algorithm | File | Status |
 | --- | --- | --- |
 | [Magnetic declination](https://algorithms.gshaw.ca/wmm/) | [WorldMagneticModel.swift](Sources/WMM/WorldMagneticModel.swift) | See [conformance.json](conformance.json) |
+| [UTM and MGRS](https://algorithms.gshaw.ca/utm-mgrs/) | [GridReference.swift](Sources/UTMMGRS/GridReference.swift) | See [conformance.json](conformance.json) |
 
 ## Use one
 

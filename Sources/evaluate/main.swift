@@ -2,6 +2,7 @@
 // result per line. See https://algorithms.gshaw.ca/format/#implementations.
 
 import Foundation
+import UTMMGRS
 import WMM
 
 enum Failure: Error {
@@ -11,6 +12,12 @@ enum Failure: Error {
 func number(_ input: [String: Any], _ name: String) throws -> Double {
     guard let value = input[name] as? NSNumber, CFGetTypeID(value) != CFBooleanGetTypeID() else { throw Failure.invalidInput }
     return value.doubleValue
+}
+
+func integer(_ input: [String: Any], _ name: String) throws -> Int {
+    let value = try number(input, name)
+    guard let whole = Int(exactly: value) else { throw Failure.invalidInput }
+    return whole
 }
 
 func string(_ input: [String: Any], _ name: String) throws -> String {
@@ -53,6 +60,40 @@ func wmm(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
     }
 }
 
+func utmMgrs(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    func coordinate(_ c: GridReference.Coordinate) -> [String: Any] {
+        ["latitudeInDegrees": c.latitude, "longitudeInDegrees": c.longitude]
+    }
+    do {
+        switch operation {
+        case "toUtm":
+            let p = try GridReference.toUTM(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"))
+            return [
+                "zone": p.zone, "hemisphere": p.hemisphere.rawValue,
+                "eastingInMeters": p.easting, "northingInMeters": p.northing,
+                "convergenceInDegrees": p.convergence, "pointScale": p.pointScale,
+            ]
+        case "fromUtm":
+            guard let hemisphere = GridReference.Hemisphere(rawValue: try string(input, "hemisphere")) else { throw Failure.invalidInput }
+            return coordinate(try GridReference.fromUTM(
+                zone: integer(input, "zone"), hemisphere: hemisphere,
+                easting: number(input, "eastingInMeters"), northing: number(input, "northingInMeters")))
+        case "toMgrs":
+            return ["mgrs": try GridReference.toMGRS(
+                latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
+                precision: integer(input, "precisionInDigits"))]
+        case "fromMgrs":
+            return coordinate(try GridReference.fromMGRS(string(input, "mgrs")))
+        case "parse":
+            return coordinate(try GridReference.parse(string(input, "text")))
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as GridReference.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -63,6 +104,7 @@ while let line = readLine() {
         let operation = query["operation"] as? String ?? ""
         switch query["algorithm"] as? String {
         case "wmm": reply["output"] = try wmm(operation, input)
+        case "utm-mgrs": reply["output"] = try utmMgrs(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {

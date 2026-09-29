@@ -8,9 +8,11 @@ let package = Package(
     platforms: [.macOS(.v13), .iOS(.v16)],
     products: [
         .library(name: "WMM", targets: ["WMM"]),
+        .library(name: "UTMMGRS", targets: ["UTMMGRS"]),
     ],
     targets: [
         .target(name: "WMM"),
-        .executableTarget(name: "evaluate", dependencies: ["WMM"]),
+        .target(name: "UTMMGRS"),
+        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS"]),
     ]
 )
