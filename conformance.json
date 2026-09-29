@@ -18,6 +18,14 @@
       "failed": 0,
       "notImplemented": 0
     },
+    "sun": {
+      "status": "fails",
+      "publishedDate": "2026-09-29",
+      "cases": 627,
+      "passed": 54,
+      "failed": 573,
+      "notImplemented": 0
+    },
     "utm-mgrs": {
       "status": "passes",
       "publishedDate": "2026-09-29",

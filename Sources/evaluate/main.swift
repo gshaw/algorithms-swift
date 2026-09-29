@@ -4,6 +4,7 @@
 import AstronomicalTime
 import Bearings
 import Foundation
+import Sun
 import UTMMGRS
 import WMM
 
@@ -163,6 +164,43 @@ func astronomicalTime(_ operation: String, _ input: [String: Any]) throws -> [St
     }
 }
 
+func instant(_ input: [String: Any], _ name: String) throws -> Date {
+    let formatter = ISO8601DateFormatter()
+    guard let date = formatter.date(from: try string(input, name)) else { throw Failure.invalidInput }
+    return date
+}
+
+func iso(_ date: Date?) -> Any {
+    guard let date else { return NSNull() }
+    let formatter = ISO8601DateFormatter()
+    return formatter.string(from: Date(timeIntervalSince1970: date.timeIntervalSince1970.rounded()))
+}
+
+func sun(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    do {
+        switch operation {
+        case "position":
+            let p = try Sun.position(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
+                                     at: instant(input, "instantUtc"))
+            return ["azimuthInDegrees": p.azimuth, "altitudeInDegrees": p.altitude]
+        case "events":
+            let e = try Sun.events(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
+                                   start: instant(input, "startUtc"), hours: number(input, "windowInHours"))
+            return [
+                "riseUtc": iso(e.rise), "setUtc": iso(e.set), "transitUtc": iso(e.transit),
+                "civilDawnUtc": iso(e.civilDawn), "civilDuskUtc": iso(e.civilDusk),
+                "nauticalDawnUtc": iso(e.nauticalDawn), "nauticalDuskUtc": iso(e.nauticalDusk),
+                "astronomicalDawnUtc": iso(e.astronomicalDawn), "astronomicalDuskUtc": iso(e.astronomicalDusk),
+                "isAlwaysUp": e.isAlwaysUp, "isAlwaysDown": e.isAlwaysDown,
+            ]
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as Sun.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -176,6 +214,7 @@ while let line = readLine() {
         case "utm-mgrs": reply["output"] = try utmMgrs(operation, input)
         case "bearings": reply["output"] = try bearings(operation, input)
         case "astronomical-time": reply["output"] = try astronomicalTime(operation, input)
+        case "sun": reply["output"] = try sun(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {
