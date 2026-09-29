@@ -4,6 +4,7 @@
 import AstronomicalTime
 import Bearings
 import Foundation
+import Moon
 import Sun
 import UTMMGRS
 import WMM
@@ -201,6 +202,29 @@ func sun(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
     }
 }
 
+func moon(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    do {
+        switch operation {
+        case "events":
+            let e = try Moon.events(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
+                                    start: instant(input, "startUtc"), hours: number(input, "windowInHours"))
+            return ["riseUtc": iso(e.rise), "setUtc": iso(e.set), "transitUtc": iso(e.transit),
+                    "isAlwaysUp": e.isAlwaysUp, "isAlwaysDown": e.isAlwaysDown]
+        case "phase":
+            let p = Moon.phase(at: try instant(input, "instantUtc"))
+            return ["illuminationFraction": p.illumination, "phaseAngleInDegrees": p.phaseAngle, "phaseName": p.name.rawValue]
+        case "nextPhases":
+            let n = Moon.nextPhases(after: try instant(input, "startUtc"))
+            return ["newMoonUtc": iso(n.newMoon), "firstQuarterUtc": iso(n.firstQuarter),
+                    "fullMoonUtc": iso(n.fullMoon), "lastQuarterUtc": iso(n.lastQuarter)]
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as Moon.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -215,6 +239,7 @@ while let line = readLine() {
         case "bearings": reply["output"] = try bearings(operation, input)
         case "astronomical-time": reply["output"] = try astronomicalTime(operation, input)
         case "sun": reply["output"] = try sun(operation, input)
+        case "moon": reply["output"] = try moon(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {

@@ -12,6 +12,7 @@ let package = Package(
         .library(name: "Bearings", targets: ["Bearings"]),
         .library(name: "AstronomicalTime", targets: ["AstronomicalTime"]),
         .library(name: "Sun", targets: ["Sun"]),
+        .library(name: "Moon", targets: ["Moon"]),
     ],
     targets: [
         .target(name: "WMM"),
@@ -19,6 +20,7 @@ let package = Package(
         .target(name: "Bearings"),
         .target(name: "AstronomicalTime"),
         .target(name: "Sun"),
-        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS", "Bearings", "AstronomicalTime", "Sun"]),
+        .target(name: "Moon"),
+        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS", "Bearings", "AstronomicalTime", "Sun", "Moon"]),
     ]
 )
