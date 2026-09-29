@@ -2,6 +2,14 @@
   "checker": "0.1.0",
   "source": "https://algorithms.gshaw.ca/algorithms.json",
   "results": {
+    "astronomical-time": {
+      "status": "passes",
+      "publishedDate": "2026-09-29",
+      "cases": 214,
+      "passed": 214,
+      "failed": 0,
+      "notImplemented": 0
+    },
     "bearings": {
       "status": "passes",
       "publishedDate": "2026-09-29",

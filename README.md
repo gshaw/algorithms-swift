@@ -9,6 +9,7 @@ Made from [algorithms-template](https://github.com/gshaw/algorithms-template).
 | [Magnetic declination](https://algorithms.gshaw.ca/wmm/) | [WorldMagneticModel.swift](Sources/WMM/WorldMagneticModel.swift) | See [conformance.json](conformance.json) |
 | [UTM and MGRS](https://algorithms.gshaw.ca/utm-mgrs/) | [GridReference.swift](Sources/UTMMGRS/GridReference.swift) | See [conformance.json](conformance.json) |
 | [Bearings](https://algorithms.gshaw.ca/bearings/) | [Bearings.swift](Sources/Bearings/Bearings.swift) | See [conformance.json](conformance.json) |
+| [Astronomical time](https://algorithms.gshaw.ca/astronomical-time/) | [AstronomicalTime.swift](Sources/AstronomicalTime/AstronomicalTime.swift) | See [conformance.json](conformance.json) |
 
 ## Use one
 

@@ -1,6 +1,7 @@
 // Reads cases from algorithms.gshaw.ca as JSON Lines on standard input and writes one
 // result per line. See https://algorithms.gshaw.ca/format/#implementations.
 
+import AstronomicalTime
 import Bearings
 import Foundation
 import UTMMGRS
@@ -134,6 +135,34 @@ func bearings(_ operation: String, _ input: [String: Any]) throws -> [String: An
     }
 }
 
+func astronomicalTime(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    do {
+        switch operation {
+        case "julianDay":
+            return ["julianDay": try AstronomicalTime.julianDay(instant: string(input, "instantUtc"))]
+        case "calendarDate":
+            let date = try AstronomicalTime.calendarDate(julianDay: number(input, "julianDay"))
+            return ["date": date.text, "calendar": date.calendar.rawValue]
+        case "deltaT":
+            return ["deltaTInSeconds": try AstronomicalTime.deltaT(decimalYear: number(input, "decimalYear"))]
+        case "siderealTime":
+            let jd = try AstronomicalTime.julianDay(instant: string(input, "instantUtc"))
+            let s = AstronomicalTime.siderealTime(julianDay: jd, longitude: try number(input, "longitudeInDegrees"))
+            return ["greenwichSiderealTimeInHours": s.greenwich, "localSiderealTimeInHours": s.local]
+        case "horizontal":
+            let jd = try AstronomicalTime.julianDay(instant: string(input, "instantUtc"))
+            let h = try AstronomicalTime.horizontal(
+                rightAscension: number(input, "rightAscensionInHours"), declination: number(input, "declinationInDegrees"),
+                latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"), julianDay: jd)
+            return ["azimuthInDegrees": h.azimuth, "altitudeInDegrees": h.altitude]
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as AstronomicalTime.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -146,6 +175,7 @@ while let line = readLine() {
         case "wmm": reply["output"] = try wmm(operation, input)
         case "utm-mgrs": reply["output"] = try utmMgrs(operation, input)
         case "bearings": reply["output"] = try bearings(operation, input)
+        case "astronomical-time": reply["output"] = try astronomicalTime(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {

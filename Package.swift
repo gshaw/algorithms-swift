@@ -10,11 +10,13 @@ let package = Package(
         .library(name: "WMM", targets: ["WMM"]),
         .library(name: "UTMMGRS", targets: ["UTMMGRS"]),
         .library(name: "Bearings", targets: ["Bearings"]),
+        .library(name: "AstronomicalTime", targets: ["AstronomicalTime"]),
     ],
     targets: [
         .target(name: "WMM"),
         .target(name: "UTMMGRS"),
         .target(name: "Bearings"),
-        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS", "Bearings"]),
+        .target(name: "AstronomicalTime"),
+        .executableTarget(name: "evaluate", dependencies: ["WMM", "UTMMGRS", "Bearings", "AstronomicalTime"]),
     ]
 )
