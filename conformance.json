@@ -3,12 +3,12 @@
   "source": "https://algorithms.gshaw.ca/algorithms.json",
   "results": {
     "wmm": {
-      "status": "incomplete",
+      "status": "passes",
       "publishedDate": "2026-09-29",
       "cases": 135,
-      "passed": 0,
+      "passed": 135,
       "failed": 0,
-      "notImplemented": 135
+      "notImplemented": 0
     }
   }
 }

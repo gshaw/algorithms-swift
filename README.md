@@ -1,35 +1,38 @@
-# Algorithms implementation template
+# Algorithms in Swift
 
-A GitHub template for an implementation of the test data on
-[algorithms.gshaw.ca](https://algorithms.gshaw.ca). It has the contract wired up and no
-language: pick one, replace `evaluate` and the check does the rest.
-[algorithms-swift](https://github.com/gshaw/algorithms-swift) is a worked example.
+Swift implementations of the algorithms on [algorithms.gshaw.ca](https://algorithms.gshaw.ca),
+each one self-contained file, held to the site's test data on every push and weekly.
+Made from [algorithms-template](https://github.com/gshaw/algorithms-template).
 
-## Start
+| Algorithm | File | Status |
+| --- | --- | --- |
+| [Magnetic declination](https://algorithms.gshaw.ca/wmm/) | [WorldMagneticModel.swift](Sources/WMM/WorldMagneticModel.swift) | See [conformance.json](conformance.json) |
 
-1. **Use this template** on GitHub, then clone the new repo.
-2. Add your toolchain to `mise.toml` and run `mise install`.
-3. Replace the `evaluate` task. It reads one case per line on standard input and writes
-   one result per line, in any order:
+## Use one
 
-   ```text
-   in:  {"algorithm":"wmm","id":"noaa-table-1","operation":"field","input":{"latitudeInDegrees":80,…}}
-   out: {"id":"noaa-table-1","output":{"magneticDeclinationInDegrees":1.28,…}}
-   out: {"id":"invalid-after-2030","error":"outOfRange"}
-   out: {"id":"utm-1","error":"notImplemented"}
-   ```
+Copy the file into your app, or add this package and depend on its product.
 
-   Answer `notImplemented` for an algorithm you haven't written yet. Keep build output
-   off standard output.
-4. `mise run test` runs the checker over the current test data, prints every case and
-   writes `conformance.json`.
-5. Push. The Conformance workflow runs the check on every push and weekly, and commits
-   `conformance.json`.
-6. To be listed on the site, open a pull request on
-   [gshaw/algorithms](https://github.com/gshaw/algorithms) adding your repo to
-   `_data/implementations.yml`.
+```swift
+let field = try WorldMagneticModel.field(
+    latitude: 49.3, longitude: -123.1, heightInKilometers: 0,
+    decimalYear: WorldMagneticModel.decimalYear(for: .now)
+)
+let trueBearing = compassBearing + field.declination  // east positive
+if field.blackout != .none { /* warn: the compass is unreliable here */ }
+```
 
-The full contract, field naming and comparison rules are on the
-[test data format](https://algorithms.gshaw.ca/format/) page. Out of the box,
-`evaluate` answers `notImplemented` to everything, so every algorithm shows as
-incomplete.
+WMM2025 runs out at 2030.0. After that, `field` throws `outOfRange`; replace the file
+when NOAA publishes WMM2030.
+
+## Check it
+
+```sh
+mise install
+mise run test   # every case against the current test data; writes conformance.json
+```
+
+`mise run evaluate` is the harness the checker drives, in `Sources/evaluate`.
+
+## Licence
+
+MIT. The WMM coefficients are NOAA's, public domain.
