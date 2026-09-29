@@ -1,5 +1,5 @@
 {
-  "checker": "0.1.0",
+  "checker": "0.2.0",
   "source": "https://algorithms.gshaw.ca/algorithms.json",
   "results": {
     "astronomical-time": {
@@ -19,11 +19,11 @@
       "notImplemented": 0
     },
     "sun": {
-      "status": "fails",
+      "status": "passes",
       "publishedDate": "2026-09-29",
       "cases": 627,
-      "passed": 54,
-      "failed": 573,
+      "passed": 627,
+      "failed": 0,
       "notImplemented": 0
     },
     "utm-mgrs": {
