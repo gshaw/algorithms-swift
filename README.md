@@ -1,7 +1,7 @@
 # Algorithms in Swift
 
 Swift implementations of the algorithms on [algorithms.gshaw.ca](https://algorithms.gshaw.ca),
-each one self-contained file, held to the site's test data on every push and weekly.
+each one self-contained file, held to the site's test data on every push and daily.
 Made from [algorithms-template](https://github.com/gshaw/algorithms-template).
 
 | Algorithm | File | Status |

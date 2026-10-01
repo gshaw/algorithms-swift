@@ -1,13 +1,13 @@
 name: Conformance
 
-# Checks the implementation against the current test data on every push and weekly,
+# Checks the implementation against the current test data on every push and daily,
 # and commits conformance.json, which algorithms.gshaw.ca reads.
 on:
   push:
     branches: [main]
   pull_request:
   schedule:
-    - cron: "17 6 * * 1"
+    - cron: "17 6 * * *"
   workflow_dispatch:
 
 permissions:
