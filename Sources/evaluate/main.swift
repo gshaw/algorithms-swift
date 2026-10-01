@@ -205,6 +205,10 @@ func sun(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
 func moon(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
     do {
         switch operation {
+        case "position":
+            let p = try Moon.position(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
+                                      at: instant(input, "instantUtc"))
+            return ["azimuthInDegrees": p.azimuth, "altitudeInDegrees": p.altitude]
         case "events":
             let e = try Moon.events(latitude: number(input, "latitudeInDegrees"), longitude: number(input, "longitudeInDegrees"),
                                     start: instant(input, "startUtc"), hours: number(input, "windowInHours"))

@@ -1,5 +1,5 @@
-// The moon's rise, set and transit, how much is lit, its phase, and the dates of the next
-// phases. One self-contained file: copy it into an app as it is.
+// Where the moon is in the sky, its rise, set and transit, how much is lit, its phase, and
+// the dates of the next phases. One self-contained file: copy it into an app as it is.
 //
 // Held to https://algorithms.gshaw.ca/moon/ by https://github.com/gshaw/algorithms-swift.
 // The moon is the main problem of ELP2000-82B (Chapront-Touzé and Chapront), from CDS
@@ -40,6 +40,16 @@ public enum Moon {
         public var firstQuarter: Date
         public var fullMoon: Date
         public var lastQuarter: Date
+    }
+
+    // MARK: - Position
+
+    /// Azimuth clockwise from north and geometric altitude of the moon's centre, seen from
+    /// the place: with parallax, up to about 1° lower than from the Earth's centre.
+    public static func position(latitude: Double, longitude: Double, at date: Date) throws(Failure) -> (azimuth: Double, altitude: Double) {
+        guard (-90...90).contains(latitude), (-180...180).contains(longitude) else { throw .outOfRange }
+        let p = topocentric(latitude: latitude, longitude: longitude, julianDay: julianDay(date))
+        return (p.azimuth, p.altitude)
     }
 
     // MARK: - Phase
@@ -176,10 +186,10 @@ public enum Moon {
                 (9.20 * cos(omega) + 0.57 * cos(2 * l) + 0.10 * cos(2 * lp) - 0.09 * cos(2 * omega)) / 3600)
     }
 
-    /// The moon seen from a place on WGS84: geometric altitude of its centre, hour angle
-    /// (degrees west, 0 to 360) and semidiameter (degrees).
+    /// The moon seen from a place on WGS84: azimuth and geometric altitude of its centre,
+    /// hour angle (degrees west, 0 to 360) and semidiameter (degrees).
     private static func topocentric(latitude: Double, longitude: Double, julianDay jd: Double)
-        -> (altitude: Double, hourAngle: Double, semidiameter: Double) {
+        -> (azimuth: Double, altitude: Double, hourAngle: Double, semidiameter: Double) {
         let t = (jd + 69.0 / 86400 - 2451545) / 36525
         let m = moon(jd), n = nutation(t)
         let epsilon = radians(23.43929111 - (46.8150 * t + 0.00059 * t * t - 0.001813 * t * t * t) / 3600 + n.obliquity)
@@ -205,7 +215,8 @@ public enum Moon {
         let ex = -cos(h) * cos(decTopo) * sin(phi) + sin(decTopo) * cos(phi)
         let ey = -sin(h) * cos(decTopo)
         let ez = cos(h) * cos(decTopo) * cos(phi) + sin(decTopo) * sin(phi)
-        return (degrees(atan2(ez, (ex * ex + ey * ey).squareRoot())), wrapped(degrees(h)), degrees(asin(1737.4 / distance)))
+        return (wrapped(degrees(atan2(ey, ex))), degrees(atan2(ez, (ex * ex + ey * ey).squareRoot())), wrapped(degrees(h)),
+                degrees(asin(1737.4 / distance)))
     }
 
     // MARK: - Helpers
