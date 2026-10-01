@@ -20,9 +20,9 @@
     },
     "moon": {
       "status": "passes",
-      "publishedDate": "2026-09-29",
-      "cases": 673,
-      "passed": 673,
+      "publishedDate": "2026-09-30",
+      "cases": 718,
+      "passed": 718,
       "failed": 0,
       "notImplemented": 0
     },
