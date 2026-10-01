@@ -6,6 +6,7 @@ import Bearings
 import Foundation
 import Moon
 import Sun
+import TidePrediction
 import UTMMGRS
 import WMM
 
@@ -229,6 +230,28 @@ func moon(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
     }
 }
 
+func tides(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
+    guard let list = input["constituents"] as? [[String: Any]] else { throw Failure.invalidInput }
+    let constituents = try list.map {
+        TidePrediction.Constituent(name: try string($0, "name"), amplitude: try number($0, "amplitudeInMeters"),
+                                   phase: try number($0, "phaseInDegrees"))
+    }
+    do {
+        switch operation {
+        case "height":
+            return ["heightInMeters": try TidePrediction.height(constituents: constituents, at: instant(input, "instantUtc"))]
+        case "nextExtremes":
+            let e = try TidePrediction.nextExtremes(constituents: constituents, after: instant(input, "startUtc"))
+            return ["highUtc": iso(e.high.date), "highHeightInMeters": e.high.height,
+                    "lowUtc": iso(e.low.date), "lowHeightInMeters": e.low.height]
+        default:
+            throw Failure.notImplemented
+        }
+    } catch let failure as TidePrediction.Failure {
+        throw failure == .outOfRange ? Failure.outOfRange : Failure.invalidInput
+    }
+}
+
 while let line = readLine() {
     guard let data = line.data(using: .utf8),
           let query = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -244,6 +267,7 @@ while let line = readLine() {
         case "astronomical-time": reply["output"] = try astronomicalTime(operation, input)
         case "sun": reply["output"] = try sun(operation, input)
         case "moon": reply["output"] = try moon(operation, input)
+        case "tides": reply["output"] = try tides(operation, input)
         default: throw Failure.notImplemented
         }
     } catch let failure as Failure {

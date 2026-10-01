@@ -12,6 +12,7 @@ Made from [algorithms-template](https://github.com/gshaw/algorithms-template).
 | [Astronomical time](https://algorithms.gshaw.ca/astronomical-time/) | [AstronomicalTime.swift](Sources/AstronomicalTime/AstronomicalTime.swift) | See [conformance.json](conformance.json) |
 | [Sun](https://algorithms.gshaw.ca/sun/) | [Sun.swift](Sources/Sun/Sun.swift) | See [conformance.json](conformance.json) |
 | [Moon](https://algorithms.gshaw.ca/moon/) | [Moon.swift](Sources/Moon/Moon.swift) | See [conformance.json](conformance.json) |
+| [Tide prediction](https://algorithms.gshaw.ca/tides/) | [TidePrediction.swift](Sources/TidePrediction/TidePrediction.swift) | See [conformance.json](conformance.json) |
 
 ## Use one
 
@@ -33,6 +34,16 @@ if field.blackout != .none { /* warn: the compass is unreliable here */ }
 ```swift
 let moon = try Moon.position(latitude: 49.3, longitude: -123.1, at: .now)
 // moon.azimuth: clockwise from true north. moon.altitude: below 0 when it's down.
+```
+
+```swift
+let station = try TidePrediction.Station(constituents: [
+    .init(name: "M2", amplitude: 1.063, phase: 10.8),  // NOAA's harcon.json: amplitude, phase_GMT
+    .init(name: "K1", amplitude: 0.834, phase: 276.8),
+    // ...
+])
+let height = try station.height(at: .now)  // above mean sea level, not chart datum
+let next = try station.nextExtremes(after: .now)  // next.high.date, next.low.height
 ```
 
 WMM2025 runs out at 2030.0. After that, `field` throws `outOfRange`; replace the file
