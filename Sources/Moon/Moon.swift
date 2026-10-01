@@ -32,6 +32,9 @@ public enum Moon {
         public var illumination: Double
         /// The Sun–Moon–Earth angle: 0 at full, 180 at new.
         public var phaseAngle: Double
+        /// The moon's ecliptic longitude minus the sun's, 0 to 360: 0 at new, 90 at first
+        /// quarter, 180 at full. Under 180 the moon is waxing.
+        public var elongation: Double
         public var name: PhaseName
     }
 
@@ -64,7 +67,7 @@ public enum Moon {
         let i = atan2(r * sin(psi), m.distance - r * cos(psi))
         let elongation = wrapped(m.longitude - s.longitude)
         let names: [PhaseName] = [.new, .waxingCrescent, .firstQuarter, .waxingGibbous, .full, .waningGibbous, .lastQuarter, .waningCrescent]
-        return Phase(illumination: (1 + cos(i)) / 2, phaseAngle: degrees(i),
+        return Phase(illumination: (1 + cos(i)) / 2, phaseAngle: degrees(i), elongation: elongation,
                      name: names[Int(wrapped(elongation + 22.5) / 45) % 8])
     }
 
