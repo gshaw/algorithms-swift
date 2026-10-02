@@ -217,7 +217,8 @@ func moon(_ operation: String, _ input: [String: Any]) throws -> [String: Any] {
                     "isAlwaysUp": e.isAlwaysUp, "isAlwaysDown": e.isAlwaysDown]
         case "phase":
             let p = Moon.phase(at: try instant(input, "instantUtc"))
-            return ["illuminationFraction": p.illumination, "phaseAngleInDegrees": p.phaseAngle, "phaseName": p.name.rawValue]
+            return ["illuminationFraction": p.illumination, "phaseAngleInDegrees": p.phaseAngle,
+                    "elongationInDegrees": p.elongation, "phaseName": p.name.rawValue]
         case "nextPhases":
             let n = Moon.nextPhases(after: try instant(input, "startUtc"))
             return ["newMoonUtc": iso(n.newMoon), "firstQuarterUtc": iso(n.firstQuarter),
