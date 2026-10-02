@@ -19,11 +19,11 @@
       "notImplemented": 0
     },
     "moon": {
-      "status": "fails",
+      "status": "passes",
       "publishedDate": "2026-10-01",
       "cases": 718,
-      "passed": 653,
-      "failed": 65,
+      "passed": 718,
+      "failed": 0,
       "notImplemented": 0
     },
     "sun": {
@@ -31,6 +31,14 @@
       "publishedDate": "2026-09-29",
       "cases": 627,
       "passed": 627,
+      "failed": 0,
+      "notImplemented": 0
+    },
+    "tides": {
+      "status": "passes",
+      "publishedDate": "2026-10-01",
+      "cases": 144,
+      "passed": 144,
       "failed": 0,
       "notImplemented": 0
     },
