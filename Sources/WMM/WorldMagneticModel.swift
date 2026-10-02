@@ -40,6 +40,19 @@ public enum WorldMagneticModel {
         /// Degrees from polar stereographic grid north to magnetic north; nil between 55° S and 55° N.
         public var gridVariation: Double?
         public var blackout: Blackout
+
+        public init(declination: Double, inclination: Double, north: Double, east: Double, down: Double,
+                    horizontal: Double, total: Double, gridVariation: Double? = nil, blackout: Blackout = .none) {
+            self.declination = declination
+            self.inclination = inclination
+            self.north = north
+            self.east = east
+            self.down = down
+            self.horizontal = horizontal
+            self.total = total
+            self.gridVariation = gridVariation
+            self.blackout = blackout
+        }
     }
 
     /// The field at a place and time. Latitude −90 to 90 and longitude −180 to 360, in

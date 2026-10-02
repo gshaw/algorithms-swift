@@ -12,7 +12,6 @@ import Foundation
 public enum Moon {
     public enum Failure: Error, Equatable, Sendable {
         case outOfRange
-        case invalidInput
     }
 
     public enum PhaseName: String, Sendable {
@@ -25,6 +24,14 @@ public enum Moon {
         public var transit: Date?
         public var isAlwaysUp: Bool
         public var isAlwaysDown: Bool
+
+        public init(rise: Date? = nil, set: Date? = nil, transit: Date? = nil, isAlwaysUp: Bool = false, isAlwaysDown: Bool = false) {
+            self.rise = rise
+            self.set = set
+            self.transit = transit
+            self.isAlwaysUp = isAlwaysUp
+            self.isAlwaysDown = isAlwaysDown
+        }
     }
 
     public struct Phase: Equatable, Sendable {
@@ -36,6 +43,13 @@ public enum Moon {
         /// quarter, 180 at full. Under 180 the moon is waxing.
         public var elongation: Double
         public var name: PhaseName
+
+        public init(illumination: Double, phaseAngle: Double, elongation: Double, name: PhaseName) {
+            self.illumination = illumination
+            self.phaseAngle = phaseAngle
+            self.elongation = elongation
+            self.name = name
+        }
     }
 
     public struct NextPhases: Equatable, Sendable {
@@ -43,6 +57,13 @@ public enum Moon {
         public var firstQuarter: Date
         public var fullMoon: Date
         public var lastQuarter: Date
+
+        public init(newMoon: Date, firstQuarter: Date, fullMoon: Date, lastQuarter: Date) {
+            self.newMoon = newMoon
+            self.firstQuarter = firstQuarter
+            self.fullMoon = fullMoon
+            self.lastQuarter = lastQuarter
+        }
     }
 
     // MARK: - Position
