@@ -19,11 +19,11 @@
       "notImplemented": 0
     },
     "moon": {
-      "status": "passes",
-      "publishedDate": "2026-09-30",
+      "status": "fails",
+      "publishedDate": "2026-10-01",
       "cases": 718,
-      "passed": 718,
-      "failed": 0,
+      "passed": 653,
+      "failed": 65,
       "notImplemented": 0
     },
     "sun": {
