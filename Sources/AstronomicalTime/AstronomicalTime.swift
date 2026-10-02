@@ -25,6 +25,13 @@ public enum AstronomicalTime {
         public var day: Int
         public var calendar: Calendar
 
+        public init(year: Int, month: Int, day: Int, calendar: Calendar) {
+            self.year = year
+            self.month = month
+            self.day = day
+            self.calendar = calendar
+        }
+
         /// YYYY-MM-DD, with a sign before years below 0.
         public var text: String {
             String(format: "%@%04d-%02d-%02d", year < 0 ? "-" : "", abs(year), month, day)

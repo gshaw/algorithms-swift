@@ -35,6 +35,11 @@ public enum TidePrediction {
     public struct Extreme: Equatable, Sendable {
         public var date: Date
         public var height: Double
+
+        public init(date: Date, height: Double) {
+            self.date = date
+            self.height = height
+        }
     }
 
     public struct Extremes: Equatable, Sendable {
@@ -42,6 +47,11 @@ public enum TidePrediction {
         public var high: Extreme
         /// The first local minimum after the start. It may come before the high.
         public var low: Extreme
+
+        public init(high: Extreme, low: Extreme) {
+            self.high = high
+            self.low = low
+        }
     }
 
     /// NOAA's 37 constituents, in NOAA's order.

@@ -11,7 +11,6 @@ import Foundation
 public enum Sun {
     public enum Failure: Error, Equatable, Sendable {
         case outOfRange
-        case invalidInput
     }
 
     public struct Events: Equatable, Sendable {
@@ -28,10 +27,26 @@ public enum Sun {
         public var isAlwaysUp: Bool
         /// Below −0.833° for the whole window.
         public var isAlwaysDown: Bool
+
+        public init(rise: Date? = nil, set: Date? = nil, transit: Date? = nil,
+                    civilDawn: Date? = nil, civilDusk: Date? = nil, nauticalDawn: Date? = nil, nauticalDusk: Date? = nil,
+                    astronomicalDawn: Date? = nil, astronomicalDusk: Date? = nil, isAlwaysUp: Bool = false, isAlwaysDown: Bool = false) {
+            self.rise = rise
+            self.set = set
+            self.transit = transit
+            self.civilDawn = civilDawn
+            self.civilDusk = civilDusk
+            self.nauticalDawn = nauticalDawn
+            self.nauticalDusk = nauticalDusk
+            self.astronomicalDawn = astronomicalDawn
+            self.astronomicalDusk = astronomicalDusk
+            self.isAlwaysUp = isAlwaysUp
+            self.isAlwaysDown = isAlwaysDown
+        }
     }
 
     /// Rise and set put the sun's centre here: its radius plus refraction at the horizon.
-    public static let riseAltitude = -0.833
+    private static let riseAltitude = -0.833
 
     /// Azimuth clockwise from north and geometric altitude of the sun's centre.
     public static func position(latitude: Double, longitude: Double, at date: Date) throws(Failure) -> (azimuth: Double, altitude: Double) {

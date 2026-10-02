@@ -27,11 +27,25 @@ public enum GridReference {
         /// Degrees clockwise from true north to grid north.
         public var convergence: Double
         public var pointScale: Double
+
+        public init(zone: Int, hemisphere: Hemisphere, easting: Double, northing: Double, convergence: Double, pointScale: Double) {
+            self.zone = zone
+            self.hemisphere = hemisphere
+            self.easting = easting
+            self.northing = northing
+            self.convergence = convergence
+            self.pointScale = pointScale
+        }
     }
 
     public struct Coordinate: Equatable, Sendable {
         public var latitude: Double
         public var longitude: Double
+
+        public init(latitude: Double, longitude: Double) {
+            self.latitude = latitude
+            self.longitude = longitude
+        }
     }
 
     // MARK: - UTM and UPS

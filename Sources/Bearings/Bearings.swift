@@ -8,8 +8,6 @@
 import Foundation
 
 public enum Bearings {
-    public static let earthRadius = 6_371_008.8
-
     public enum Failure: Error, Equatable, Sendable {
         case outOfRange
         case invalidInput
@@ -106,6 +104,9 @@ public enum Bearings {
     }
 
     // MARK: - Helpers
+
+    /// Turf's mean radius in metres.
+    private static let earthRadius = 6_371_008.8
 
     private static let compassPoints = [
         "N", "N by E", "NNE", "NE by N", "NE", "NE by E", "ENE", "E by N",
