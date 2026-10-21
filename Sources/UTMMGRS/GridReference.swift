@@ -4,7 +4,8 @@
 // Held to https://algorithms.gshaw.ca/utm-mgrs/ by https://github.com/gshaw/algorithms-swift.
 // The projection is the Krüger series to sixth order from C. F. F. Karney, "Transverse
 // Mercator with an accuracy of a few nanometers" (2011); the zone rules, MGRS lettering
-// and parsing follow GeographicLib, the reference the test data comes from.
+// and parsing follow GeographicLib, the reference the test data comes from, except that
+// parsing also reads a UTM latitude band letter, as GPS units write it.
 
 import Foundation
 
@@ -182,7 +183,9 @@ public enum GridReference {
 
     /// A coordinate as a person types it: two angles in decimal degrees, degrees and
     /// minutes, or degrees, minutes and seconds, with hemisphere letters before or after;
-    /// UTM or UPS as `10n 491221 5458889`; or an MGRS reference.
+    /// UTM or UPS as `10n 491221 5458889`, or UTM with a latitude band, `10U 491221 5458889`,
+    /// where `S` is band S if the point falls in it and the southern hemisphere otherwise; or
+    /// an MGRS reference.
     public static func parse(_ text: String) throws(Failure) -> Coordinate {
         let parts = text.split(whereSeparator: { $0.isWhitespace || $0 == "," }).map(String.init)
         switch parts.count {
@@ -207,11 +210,29 @@ public enum GridReference {
             guard let easting = Double(numbers[0]), let northing = Double(numbers[1]) else { throw .invalidInput }
             let digits = zoneText.prefix { $0.isASCII && $0.isNumber }
             let word = zoneText.dropFirst(digits.count).lowercased()
-            guard digits.count <= 2, let hemisphere: Hemisphere = ["n": .north, "north": .north, "s": .south, "south": .south][word]
-            else { throw .invalidInput }
+            guard digits.count <= 2 else { throw .invalidInput }
             let zone = digits.isEmpty ? 0 : Int(digits)!
             guard digits.isEmpty || (1...60).contains(zone) else { throw .outOfRange }
-            return try fromUTM(zone: zone, hemisphere: hemisphere, easting: easting, northing: northing)
+            if let hemisphere: Hemisphere = ["n": .north, "north": .north, "south": .south][word] {
+                return try fromUTM(zone: zone, hemisphere: hemisphere, easting: easting, northing: northing)
+            }
+            if digits.isEmpty {
+                guard word == "s" else { throw .invalidInput }
+                return try fromUTM(zone: 0, hemisphere: .south, easting: easting, northing: northing)
+            }
+            // A latitude band, as GPS units write UTM. S is also the southern hemisphere:
+            // it's band S only when the point falls in band S.
+            guard word.count == 1, let band = latitudeBands.firstIndex(of: Character(word.uppercased())) else {
+                throw .invalidInput
+            }
+            let hemisphere: Hemisphere = band >= 10 ? .north : .south
+            let coordinate = try fromUTM(zone: zone, hemisphere: hemisphere, easting: easting, northing: northing)
+            let south = Double(band - 10) * 8, north = band == 19 ? 84 : south + 8
+            guard (south - 0.01...north + 0.01).contains(coordinate.latitude) else {
+                guard word == "s" else { throw .invalidInput }
+                return try fromUTM(zone: zone, hemisphere: .south, easting: easting, northing: northing)
+            }
+            return coordinate
         default:
             throw .invalidInput
         }
