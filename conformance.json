@@ -43,11 +43,11 @@
       "notImplemented": 0
     },
     "utm-mgrs": {
-      "status": "passes",
-      "publishedDate": "2026-09-29",
-      "cases": 1682,
-      "passed": 1682,
-      "failed": 0,
+      "status": "fails",
+      "publishedDate": "2026-10-21",
+      "cases": 1687,
+      "passed": 1684,
+      "failed": 3,
       "notImplemented": 0
     },
     "wmm": {
